@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout/layout}">
+<head>
+	<meta charset="UTF-8">
+	<title>회원정보 출력창</title>
+	<style type="text/css">
+		body {
+			background-color: #212529;
+			color: #f8f9fa;
+			font-family: Arial, sans-serif;
+		}
+		.card {
+			background-color: #343a40;
+		}
+		.card-title, .card-text {
+			color: #f8f9fa;
+		}
+		.blockquote {
+			color: #f8f9fa;
+		}
+		header {
+			padding: 1rem 0;
+		}
+		nav {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		nav a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+		}
+		.nav-right {
+			display: flex;
+			align-items: center;
+		}
+		.nav-right input[type="search"] {
+			margin-right: 1rem;
+			padding: 0.5rem;
+		}
+		.sign-up {
+			background-color: #007bff;
+			color: #f8f9fa;
+			border: none;
+			padding: 0.5rem 1rem;
+			cursor: pointer;
+		}
+		.menu {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 1rem 0;
+		}
+		.menu a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+			padding: 0.5rem 0;
+		}
+		.menu li {
+			list-style-type: none;
+			display: inline-block;
+		}
+		.featured-post {
+			margin-bottom: 2rem;
+		}
+		.post-previews {
+			display: flex;
+			justify-content: space-between;
+		}
+		.post-preview {
+			background-color: #343a40;
+			padding: 1rem;
+			margin-right: 1rem;
+			flex: 1;
+		}
+		a {
+			text-decoration: none;
+			color: black;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+		.target {
+			color: red;
+			font-weight: bold;
+			font-size: 1.5em;
+		}
+		.noLine {
+			color: black;
+			font-weight: normal;
+			font-size: 1em;
+		}
+		.memberformdiv {
+			background-color: #444444;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+			max-width: 500px;
+			margin: 100px auto;
+		}
+		#frmMember h2 {
+			color: #dddddd;
+			font-size: 24px;
+			margin-bottom: 20px;
+			text-align: center;
+		}
+		.memberinput {
+			width: calc(100% - 32px);
+			height: 30px;
+			padding: 14px 16px;
+			margin-bottom: 20px;
+			background-color: rgba(57, 57, 57, 0.7);
+			border: 1px solid #dddfe2;
+			border-radius: 6px;
+			font-size: 17px;
+			color: #f8f9fa;
+		}
+		.memberinput2{
+			width: calc(66% - 32px);
+			height: 30px;
+			padding: 14px 16px;
+			margin-bottom: 20px;
+			background-color: rgba(57, 57, 57, 0.7);
+			border: 1px solid #dddfe2;
+			border-radius: 6px;
+			font-size: 17px;
+			color: #f8f9fa;
+		}
+
+		#frmMember input[type=button], #frmMember input[type=submit] {
+			position: relative;
+			left: 0;
+			box-shadow: 2px 2px 2px #aaaaaa;
+			padding: 10px;
+			margin-left: 10px;
+			height: 60px;
+			border: none;
+			background-color: #555555;
+			color: #FFFFFF;
+			cursor: pointer;
+			border-radius: 6px;
+			font-size: 16px;
+			line-height: 30px;
+			text-align: center;
+			display: inline-block;
+		}
+		#frmMember input[type=button]:hover, #frmMember input[type=submit]:hover {
+			background-color: #166fe5;
+		}
+
+
+		.hello{
+			text-align: center;
+
+		}
+		.hello input{
+			box-shadow: 3px 3px 3px #aaaaaa;
+			width: calc(60% - 32px);;
+			padding: 10px;
+			margin-left: 10px;
+			height: 60px;
+			border: none;
+			background-color: #555555;
+			color: #FFFFFF;
+			cursor: pointer;
+			border-radius: 6px;
+			font-size: 16px;
+			line-height: 30px;
+			text-align: center;
+			display: inline-block;
+		}
+
+
+
+
+
+
+
+
+	</style>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script th:inline="javascript">
+		/*<![CDATA[*/
+		let idDupl = 'N';
+		let emailVerified = false;
+
+		function verifyEmail() {
+			let email = document.getElementById('email').value;
+			if (email.trim() === "") {
+				alert("이메일을 입력해주세요.");
+				return;
+			}
+
+			$.ajax({
+				url: "/mail/verifyEmail.do",
+				type: "post",
+				data: { email: email },
+				success: function(response) {
+					if (response === "success") {
+						alert("인증 이메일이 발송되었습니다. 이메일을 확인해주세요.");
+					} else {
+						alert("이메일 인증에 실패했습니다. 다시 시도해주세요.");
+					}
+				},
+				error: function() {
+					alert("이메일 인증 중 오류가 발생했습니다.");
+				}
+			});
+		}
+
+		function verifyCode() {
+			let email = document.getElementById('email').value;
+			let code = document.getElementById('verificationCode').value;
+			if (code.trim() === "") {
+				alert("인증 코드를 입력해주세요.");
+				return;
+			}
+
+			$.ajax({
+				url: "/mail/verifyCode.do",
+				type: "post",
+				data: {
+					email: email,
+					code: code
+				},
+				success: function(response) {
+					if (response === "success") {
+						alert("이메일이 성공적으로 인증되었습니다.");
+						emailVerified = true;
+						document.getElementById('verificationCode').disabled = true; // 인증 완료 후 입력 비활성화
+					} else {
+						alert("인증 코드가 올바르지 않습니다. 다시 확인해주세요.");
+						emailVerified = false;
+					}
+				},
+				error: function(jqXHR, textStatus, errorThrown) {
+					console.error("AJAX error: " + textStatus + ' : ' + errorThrown);
+					alert("인증 코드 확인 중 오류가 발생했습니다. 상세: " + jqXHR.responseText);
+					emailVerified = false;
+				}
+			});
+		}
+
+		function fn_validateSendMember() {
+			let frmMember = document.forms['frmMember'];
+			let id = frmMember.id.value;
+			let pw = frmMember.pw.value;
+			let pwCheck = frmMember.pwCheck.value;
+			let name = frmMember.name.value;
+			let phoneNum = frmMember.phoneNum.value;
+			let email = frmMember.email.value;
+
+			if (id.length == 0 || id.trim() == "") {
+				alert("아이디를 입력해주세요");
+				frmMember.id.focus();
+			} else if (pw.length == 0 || pw.trim() == "") {
+				alert("비밀번호를 입력해주세요");
+				frmMember.pw.focus();
+			} else if (pwCheck.length == 0 || pwCheck.trim() == "") {
+				alert("비밀번호 확인을 입력해주세요");
+				frmMember.pwCheck.focus();
+			} else if (pwCheck != pw) {
+				alert("비밀번호와 비밀번호 확인이 같지 않습니다");
+				frmMember.pw.focus();
+			} else if (name.length == 0 || name.trim() == "") {
+				alert("이름을 입력해주세요");
+				frmMember.name.focus();
+			} else if (phoneNum.length == 0 || phoneNum.trim() == "") {
+				alert("핸드폰 번호를 숫자만 입력해주세요");
+				frmMember.phoneNum.focus();
+			} else if (email.length == 0 || email.trim() == "") {
+				alert("이메일을 입력해주세요");
+				frmMember.email.focus();
+			} else if (idDupl == "N") {
+				alert("아이디 중복확인을 해주세요");
+			} else if (!emailVerified) {
+				alert("이메일 인증을 해주세요");
+				return;
+			} else {
+				frmMember.method = "post";
+				frmMember.action = "/member/addMember.do";
+				frmMember.submit();
+			}
+		}
+
+		function idCheck() {
+			let id = $('#id').val().trim();
+			if (id.length === 0) {
+				alert("아이디를 입력해주세요.");
+				return;
+			}
+			if (id.length < 4 || id.length > 20) {
+				alert("아이디는 4자 이상 20자 이하로 입력해주세요.");
+				return;
+			}
+			$.ajax({
+				url: "/member/idCheck.do",
+				type: "post",
+				data: {id: id},
+				success: function(cnt) {
+					if (cnt == 0) {
+						alert("사용할 수 있는 아이디입니다.");
+						idDupl = "Y";
+					} else {
+						alert("중복된 아이디입니다. 다른 아이디를 입력해주세요.");
+						$('#id').val('');
+						idDupl = "N";
+					}
+				},
+				error: function() {
+					alert("에러가 발생했습니다. 다시 시도해주세요.");
+				}
+			});
+		}
+
+		$(document).ready(function() {
+			const idInput = document.getElementById('id');
+
+			idInput.addEventListener('input', function(e) {
+				const value = e.target.value;
+				let message = "";
+
+				if (/[ᄀ-하-ᅵ가-힣]/.test(value)) {
+					message = "아이디는 한글을 입력할 수 없습니다.";
+				} else if (/[A-Z]/.test(value)) {
+					message = "아이디는 영어 대문자를 쓸 수 없습니다.";
+				} else if (/[^a-z0-9]/.test(value)) {
+					message = "아이디는 특수기호를 쓸 수 없습니다.";
+				}
+
+				if (message) {
+					alert(message);
+					e.target.value = value.replace(/[^a-z0-9]/g, '');
+				}
+			});
+
+			$('#email').on('input', function() {
+				emailVerified = false;
+				document.getElementById('verificationCode').disabled = false;
+			});
+		});
+		/*]]>*/
+	</script>
+</head>
+<body>
+<th:block layout:fragment="content">
+	<div class="memberformdiv">
+		<form name="frmMember" th:action="@{/member/addMember.do}" method="post" id="frmMember">
+			<h2 class="memberTilte">회원가입창</h2>
+			<p>아이디</p>
+			<div>
+				<input type="text" class="memberinput2" id="id" name="id" placeholder="아이디">
+				<input type="button"  value="아이디 중복확인" onclick="idCheck()">
+			</div>
+			<p>비밀번호</p>
+			<input type="password" class="memberinput" name="pw" placeholder="비밀번호">
+			<p>비밀번호 확인</p>
+			<input type="password" class="memberinput" name="pwCheck" placeholder="비밀번호 확인">
+			<p>이름</p>
+			<input type="text" class="memberinput" name="name" placeholder="이름">
+			<p>전화번호</p>
+			<input type="number" class="memberinput" name="phoneNum" placeholder="전화번호 (숫자만 입력)">
+			<p>이메일</p>
+			<input type="text" class="memberinput2" id="email" name="email" placeholder="이메일">
+			<input type="button" value="이메일 인증" onclick="verifyEmail()">
+			<input type="text" class="memberinput2" id="verificationCode" name="verificationCode" placeholder="인증 코드">
+			<input type="button" value="인증 확인" onclick="verifyCode()">
+			<p class="hello"><input type="button" value="회원가입" onclick="fn_validateSendMember();"></p>
+		</form>
+	</div>
+</th:block>
+</body>
+</html>

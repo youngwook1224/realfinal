@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="/layout/layout">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <title>매장 안내</title>
+    <style type="text/css">
+        body {
+            background-color: #212529;
+            color: #f8f9fa;
+        }
+        .card {
+            background-color: #343a40;
+        }
+        .card-title, .card-text {
+            color: #f8f9fa;
+        }
+        .blockquote {
+            color: #f8f9fa;
+        }
+        header {
+            padding: 1rem 0;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav a {
+            color: #f8f9fa;
+            margin-right: 1rem;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+        .nav-right input[type="search"] {
+            margin-right: 1rem;
+            padding: 0.5rem;
+        }
+        .sign-up {
+            background-color: #007bff;
+            color: #f8f9fa;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        .menu a {
+            color: #f8f9fa;
+            margin-right: 1rem;
+            padding: 0.5rem 0;
+        }
+        .menu li{
+            list-style-type: none;
+            display: inline-block;
+        }
+        .featured-post {
+            margin-bottom: 2rem;
+        }
+        .post-previews {
+            display: flex;
+            justify-content: space-between;
+        }
+        .post-preview {
+            background-color: #343a40;
+            padding: 1rem;
+            margin-right: 1rem;
+            flex: 1;
+        }
+        a {
+            text-decoration: none;
+            color:black;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .target {
+            color:red;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+        .noLine {
+            color:black;
+            font-weight: normal;
+            font-size:1em;
+        }
+    </style>
+    <style>
+        h1{
+            text-align: center;
+        }
+        .container {
+            display: flex;
+            margin: 0 auto;
+        }
+        .map-container {
+            flex: 1;
+            margin-left: 50px;
+            border-radius: 15px 0 0 15px;
+            box-shadow: 5px 5px 5px gray;
+        }
+        .infowindow {
+            margin: 0 auto;
+            height: 230px;
+            width: 220px;
+            padding: 10px;
+            box-sizing: border-box;
+            background-color: salmon;
+            border: none;
+            border-radius: 15px;
+        }
+        .list-container {
+            box-shadow: 5px 5px 5px gray;
+            border-radius: 0 15px 15px 0;
+            color: #212529;
+            background-color: #cdcdcd;
+            width: 250px;
+            padding-left: 20px;
+            margin-right: 50px;
+            text-align: left;
+        }
+        .location-name {
+            cursor: pointer;
+        }
+        .location-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .location-item {
+            margin-bottom: 10px;
+        }
+        .location-item button {
+            margin-top: 5px;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .res_button {
+            margin: 0 auto;
+            display: block; /* 또는 inline-block */
+            font-weight: bold;
+            font-size: 1.0em;
+            width: 80px;
+            height: 50px;
+            border: none;
+            border-radius: 25px;
+        }
+
+        .loca_name{
+            margin: 0 auto;
+            font-size: 1.3em;
+            text-align: center;
+            font-weight: bold;
+            color: #212529;
+        }
+        .loca_addr {
+            margin: 10px auto;
+            text-align: center;
+            font-size: 1.0em;
+            color: #212529;
+        }
+
+
+    </style>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <h1>매장 안내</h1>
+    <div class="container">
+        <div id="map" class="map-container" style="height: 500px;"></div>
+        <div class="list-container">
+            <ul id="locationList" class="location-list"></ul>
+        </div>
+    </div>
+
+    <!--모달창-->
+    <div id="detailModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle"></h2>
+            <p id="modalAddress"></p>
+            <p id="modalDetails"></p>
+        </div>
+    </div>
+
+    <script src="https://dapi.kakao.com/v2/maps/sdk.js?appkey=b888b9fbe895d2cf562f417a36bd991d&libraries=services"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+        function initMap() {
+            var mapContainer = document.getElementById('map');
+            if (!mapContainer) {
+                console.error('지도 컨테이너를 찾을 수 없습니다.');
+                return;
+            }
+
+            var mapOption = {
+                center: new kakao.maps.LatLng(37.4980854, 127.0375184),
+                level: 5
+            };
+
+            var map = new kakao.maps.Map(mapContainer, mapOption);
+            console.log('지도가 생성되었습니다.');
+
+            var geocoder = new kakao.maps.services.Geocoder();
+
+            var locations = [
+                {name: '코드브루1', lat: 37.4980854, lng: 127.0375184, details: "오픈 시간: 08:00 - 22:00  ,  주차 가능"},
+                {name: '코드브루2', lat: 37.5100854, lng: 127.0295114, details: "오픈 시간: 08:00 - 22:00  ,  와이파이 제공"},
+                {name: '코드브루3', lat: 37.4962854, lng: 127.0253584, details: "오픈 시간: 08:00 - 22:00  ,  애완동물 동반 가능"},
+                {name: '코드브루4', lat: 37.5021811, lng: 127.0315773, details: "오픈 시간: 08:00 - 22:00   , 스터디룸 보유"},
+                {name: '코드브루5', lat: 37.4940459, lng: 127.0275991, details: "오픈 시간: 08:00 - 22:00  ,  루프탑 카페"}
+            ];
+
+            var locationList = document.getElementById('locationList');
+            var markers = [];
+            var infowindows = [];
+            var locationInfos = [];
+
+            function processLocation(location) {
+                return new Promise((resolve) => {
+                    var position = new kakao.maps.LatLng(location.lat, location.lng);
+
+                    var marker = new kakao.maps.Marker({
+                        map: map,
+                        position: position
+                    });
+
+                    markers.push(marker);
+
+                    geocoder.coord2Address(location.lng, location.lat, function(result, status) {
+                        if (status === kakao.maps.services.Status.OK) {
+                            var address = result[0].address.address_name;
+
+                            var infowindowContent =
+                                '<div class="infowindow">' +
+                                '<h3 class="loca_name">' + location.name + '</h3>' +
+                                '<p class="loca_addr">주소 : ' + address + '</p>' +
+                                '<p class="loca_addr">' + location.details + '</p>' +
+                                '<div class="resDiv">' +
+                                '&nbsp<button class="res_button" onclick="goToReservations(\'' + location.name + '\')">예약하기</button>'
+
+                                '</div>'
+
+
+                            var infowindow = new kakao.maps.InfoWindow({
+                                content: infowindowContent,
+                                removable: true,
+                                zIndex: 1
+                            });
+
+                            infowindows.push(infowindow);
+
+                            kakao.maps.event.addListener(marker, 'click', function() {
+                                closeAllInfoWindows();
+                                infowindow.open(map, marker);
+                            });
+
+                            console.log(location.name + ' 마커가 생성되었습니다. 주소: ' + address);
+
+                            locationInfos.push({
+                                name: location.name,
+                                address: address,
+                                position: position,
+                                marker: marker,
+                                infowindow: infowindow
+                            });
+
+                            resolve();
+                        }
+                    });
+                });
+            }
+
+            Promise.all(locations.map(processLocation)).then(() => {
+                // 이름으로 정렬
+                locationInfos.sort((a, b) => a.name.localeCompare(b.name));
+
+                // 정렬된 순서로 리스트 생성
+                locationInfos.forEach((info) => {
+                    var listItem = document.createElement('li');
+                    listItem.className = 'location-item';
+                    listItem.innerHTML = '<strong class="location-name">' + info.name + '</strong><br>' + info.address ;
+
+
+                    listItem.querySelector('.location-name').onclick = function() {
+                        map.setCenter(info.position);
+                        closeAllInfoWindows();
+                        info.infowindow.open(map, info.marker);
+                    };
+
+                    locationList.appendChild(listItem);
+                });
+            });
+
+            function closeAllInfoWindows() {
+                infowindows.forEach(function(infowindow) {
+                    infowindow.close();
+                });
+            }
+        }
+
+        function goToReservations(placeName) {
+            var reservationsUrl = /*[[@{/reservations}]]*/ '/reservations';
+            window.location.href = reservationsUrl + '?cafeLocation=' + encodeURIComponent(placeName);
+        }
+
+        function showDetails(name, address, details) {
+            var modal = document.getElementById('detailModal');
+            var span = document.getElementsByClassName("close")[0];
+
+            document.getElementById('modalTitle').textContent = name;
+            document.getElementById('modalAddress').textContent = address;
+            document.getElementById('modalDetails').textContent = details;
+
+            modal.style.display = "block";
+
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+
+
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+        }
+
+        window.onload = function() {
+            kakao.maps.load(initMap);
+        };
+        /*]]>*/
+    </script>
+</th:block>
+</body>
+</html>

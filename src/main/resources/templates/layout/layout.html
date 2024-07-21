@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+
+<style>
+  body {
+    background-color: #212529;
+    color: #f8f9fa;
+  }
+  .card {
+    background-color: #343a40;
+  }
+  .card-title, .card-text {
+    color: #f8f9fa;
+  }
+  .blockquote {
+    color: #f8f9fa;
+  }
+  header {
+    padding: 1rem 0;
+  }
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  nav a {
+    color: #f8f9fa;
+    margin-right: 1rem;
+  }
+  .nav-right {
+    display: flex;
+    align-items: center;
+  }
+  .nav-right input[type="search"] {
+    margin-right: 1rem;
+    padding: 0.5rem;
+  }
+  .sign-up {
+    background-color: #007bff;
+    color: #f8f9fa;
+    border: none;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+  }
+  .menu {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 1rem 0;
+  }
+  .menu a {
+    color: #f8f9fa;
+    margin-right: 1rem;
+    padding: 0.5rem 0;
+  }
+  .featured-post {
+    margin-bottom: 2rem;
+  }
+  .post-previews {
+    display: flex;
+    justify-content: space-between;
+  }
+  .post-preview {
+    background-color: #343a40;
+    padding: 1rem;
+    margin-right: 1rem;
+    flex: 1;
+  }
+</style>
+
+<head>
+  <meta charset="UTF-8">
+  <title>레이아웃 페이지</title>
+</head>
+<body>
+<div id="container">
+  <header th:replace="layout/header :: header"></header>
+  <div id="content" layout:fragment="content"></div>
+  <div id="sidebar_left" th:replace="layout/sidebar :: sidebar"></div>
+  <footer th:replace="layout/footer :: footer"></footer>
+</div>
+</body>
+</html>

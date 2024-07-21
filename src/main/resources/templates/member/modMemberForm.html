@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>회원정보 출력창</title>
+	<style type="text/css">
+		body {
+			background-color: #212529;
+			color: #f8f9fa;
+		}
+		.card {
+			background-color: #343a40;
+		}
+		.card-title, .card-text {
+			color: #f8f9fa;
+		}
+		.blockquote {
+			color: #f8f9fa;
+		}
+		header {
+			padding: 1rem 0;
+		}
+		nav {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		nav a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+		}
+		.nav-right {
+			display: flex;
+			align-items: center;
+		}
+		.nav-right input[type="search"] {
+			margin-right: 1rem;
+			padding: 0.5rem;
+		}
+		.sign-up {
+			background-color: #007bff;
+			color: #f8f9fa;
+			border: none;
+			padding: 0.5rem 1rem;
+			cursor: pointer;
+		}
+		.menu {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 1rem 0;
+		}
+		.menu a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+			padding: 0.5rem 0;
+		}
+		.menu li{
+			list-style-type: none;
+			display: inline-block;
+		}
+		.featured-post {
+			margin-bottom: 2rem;
+		}
+		.post-previews {
+			display: flex;
+			justify-content: space-between;
+		}
+		.post-preview {
+			background-color: #343a40;
+			padding: 1rem;
+			margin-right: 1rem;
+			flex: 1;
+		}
+		a {
+			text-decoration: none;
+			color:black;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+		.target {
+			color:red;
+			font-weight: bold;
+			font-size: 1.5em;
+		}
+		.noLine {
+			color:black;
+			font-weight: normal;
+			font-size:1em;
+		}
+	</style>
+</head>
+<body>
+	<form name="frmMember" action="/member/updateMember.do" method="post">
+			<table>
+				<tr>
+					<th>회원정보 수정창</th>
+				</tr>
+				<tr>
+					<td>아이디</td>
+					<td><input type="text" th:value=${member.id} disabled></td>
+					<input type="hidden" name="id" th:value=${member.id}>
+				</tr>
+				<tr>
+					<td>비밀번호</td>
+					<td><input type="password" name="pw" th:value=${member.pw} required> </td>
+				</tr>
+				<tr>
+					<td>이름</td>
+					<td><input type="text" name="name" th:value=${member.name} required> </td>
+				</tr>
+				<tr>
+					<td>전화번호</td>
+					<td><input type="number" name="phoneNum" th:value=${member.phoneNum}> </td>
+				</tr>
+				<tr>
+					<td>이메일</td>
+					<td><input type="text" name="email" th:value=${member.email}> </td>
+				</tr>
+				<tr>
+					<td>가입일</td>
+					<td><input type="text" name="joinDate" th:value=${member.joinDate} disabled></td>
+				</tr>
+			</table>		
+			<input type="submit" value="수정하기" >
+			<input type="reset" value="다시입력">
+		</form>
+</body>
+</html>

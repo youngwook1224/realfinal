@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="scv.DevOpsunity.member.dao.MemberDAO">
+    <resultMap type="memberDTO" id="memResult">
+        <result property="id" column="id"/>
+        <result property="pw" column="pw"/>
+        <result property="name" column="name"/>
+        <result property="phoneNum" column="phoneNum"/>
+        <result property="email" column="email"/>
+        <result property="joinDate" column="joinDate"/>
+    </resultMap>
+
+    <!-- SQL문 중복 제거하기 -->
+    <sql id="sr">
+        <![CDATA[
+          select * from member_tbl
+       ]]>
+    </sql>
+
+    <!--모든 회원 보기-->
+    <select id="selectAllMembersList" resultMap="memResult">
+        <include refid="sr"/>
+        order by joinDate desc
+    </select>
+
+    <!-- 해당 멤버보기 -->
+    <select id="selectMemberById" parameterType="String" resultType="memberDTO">
+        <include refid="sr"/>
+        <where>
+            id=#{id}   <!-- #{} = PreparedStatement 와 유사  -->
+        </where>
+    </select>
+
+
+    <!--멤버추가 -->
+    <insert id="insertMember" parameterType="memberDTO">
+        <![CDATA[
+          insert into member_tbl values(#{id},#{pw},#{name},#{phoneNum},#{email},sysdate())
+       ]]>
+    </insert>
+
+    <!--회원정보수정-->
+    <update id="updateMember" parameterType="memberDTO">
+        <![CDATA[
+          update member_tbl set pw=#{pw}, name=#{name}, phoneNum=#{phoneNum}, email=#{email} where id=#{id}
+       ]]>
+    </update>
+
+    <!--멤버 삭제-->
+    <delete id="delMember" parameterType="String">
+        <![CDATA[
+          delete from member_tbl where id=#{id}
+       ]]>
+    </delete>
+
+    <!--로그인 확인-->
+    <select id="loginCheck" parameterType="memberDTO" resultType="memberDTO">
+        <include refid="sr"/>
+        <where>
+            id=#{id} and pw=#{pw}
+        </where>
+    </select>
+
+    <!-- ID 확인-->
+    <select id="idCheck" parameterType="String" resultType="int">
+        SELECT COUNT(id)
+        FROM member_tbl
+        WHERE id = #{id}
+    </select>
+
+
+    <!--  조건 검색
+       <select id="searchMember" parameterType="memberDTO" resultMap="memResult">
+          <include refid="sr"/>
+          <where>
+             <if test="name != '' and name != null">
+                name=#{name}
+             </if>
+             <if test="email != '' and email != null">
+                and email=#{email}
+             </if>
+          </where>
+          order by joinDate desc
+       </select>
+   -->
+
+    <!--조건검색-->
+    <select id="searchMember" parameterType="memberDTO" resultMap="memResult">
+        <include refid="sr"/>
+        <where>
+            <choose>
+                <when test="name != '' and name != null and email != '' and email != null">
+                    name=#{name} and email=#{email}
+                </when>
+                <when test="name != '' and name != null">
+                    name like concat('%', #{name}, '%')
+                </when>
+                <when test="email != '' and email != null">
+                    email like concat('%', #{email}, '%')
+                </when>
+            </choose>
+        </where>
+        order by joinDate desc
+    </select>
+
+
+
+
+    <select id="findIdByEmail" parameterType="String" resultType="String">
+        SELECT id FROM member_tbl WHERE email = #{email}
+    </select>
+
+
+    <select id="findMemberByEmail" parameterType="String" resultType="memberDTO">
+        SELECT * FROM member_tbl WHERE email = #{email}
+    </select>
+
+    <update id="updatePassword" parameterType="map">
+        UPDATE member_tbl SET pw = #{newPassword} WHERE id = #{id}
+    </update>
+
+
+
+
+</mapper>

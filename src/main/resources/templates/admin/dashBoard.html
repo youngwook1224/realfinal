@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="/layout/layout">
+<head>
+    <title>관리자 대시보드</title>
+    <style>
+        .dashboard {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 20px;
+        }
+        .dashboard-item {
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 20px;
+            width: 200px;
+            text-align: center;
+        }
+        .dashboard-item h2 {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<th:block layout:fragment="content">
+    <h1>관리자 대시보드</h1>
+    <div class="dashboard">
+        <div class="dashboard-item">
+            <h2>게시판 수</h2>
+            <p th:text="${boards}"></p>
+        </div>
+        <div class="dashboard-item">
+            <h2>회원 수</h2>
+            <p th:text="${members}"></p>
+        </div>
+        <div class="dashboard-item">
+            <h2>댓글 수</h2>
+            <p th:text="${comments}"></p>
+        </div>
+    </div>
+</th:block>
+</body>
+</html>
