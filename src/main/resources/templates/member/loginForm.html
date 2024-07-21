@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="~{layout/layout}">
+<head>
+	<meta charset="UTF-8">
+	<title>로그인 창</title>
+	<style type="text/css">
+		body {
+			background-color: #212529;
+			color: #f8f9fa;
+		}
+		.card {
+			background-color: #343a40;
+		}
+		.card-title, .card-text {
+			color: #f8f9fa;
+		}
+		.blockquote {
+			color: #f8f9fa;
+		}
+		header {
+			padding: 1rem 0;
+		}
+		nav {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		nav a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+		}
+		.nav-right {
+			display: flex;
+			align-items: center;
+		}
+		.nav-right input[type="search"] {
+			margin-right: 1rem;
+			padding: 0.5rem;
+		}
+		.sign-up {
+			background-color: #007bff;
+			color: #f8f9fa;
+			border: none;
+			padding: 0.5rem 1rem;
+			cursor: pointer;
+		}
+		.menu {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 1rem 0;
+		}
+		.menu a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+			padding: 0.5rem 0;
+		}
+		.menu li{
+			list-style-type: none;
+			display: inline-block;
+		}
+		.featured-post {
+			margin-bottom: 2rem;
+		}
+		.post-previews {
+			display: flex;
+			justify-content: space-between;
+		}
+		.post-preview {
+			background-color: #343a40;
+			padding: 1rem;
+			margin-right: 1rem;
+			flex: 1;
+		}
+		a {
+			text-decoration: none;
+			color:black;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+		.target {
+			color:red;
+			font-weight: bold;
+			font-size: 1.5em;
+		}
+		.noLine {
+			color:black;
+			font-weight: normal;
+			font-size:1em;
+		}
+	</style>
+	<style>
+		.txt {
+            color: red;
+        }
+	</style>
+
+
+
+	<style>
+
+		.loginformdiv {
+			background-color:#444444;
+			border-radius: 8px;
+			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1), 0 8px 16px rgba(0, 0, 0, 0.1);
+			padding: 20px;
+			max-width: 500px;
+			margin: 100px auto;
+		}
+
+		#frmLogin h2 {
+			color: #dddddd;
+			font-size: 24px;
+			margin-bottom: 20px;
+		}
+
+		#frmLogin input[type=text], #frmLogin input[type=password] {
+			color: #dddddd;
+			width: 80%;
+			height: 30px;
+			padding: 14px 16px;
+			margin-bottom: 30px;
+			margin-left: 40px;
+			background-color: rgba(57,57,57,0.7);
+			border: 1px solid #dddfe2;
+			border-radius: 6px;
+			font-size: 17px;
+		}
+
+		#frmLogin input[type=text]{
+			margin-top: 100px;
+		}
+
+
+		.hello{
+			text-align: center;
+		}
+
+		#frmLogin input[type=submit] {
+			border: none;
+			background-color: #555555; /* Dark gray background for buttons */
+			color: #FFFFFF;
+			cursor: pointer;
+			box-shadow: 5px 5px 5px #aaaaaa;
+			border-radius: 6px;
+			font-size: 20px;
+			line-height: 48px;
+			padding: 0 16px;
+			width: 50%;
+			margin-bottom: 50px;
+		}
+
+		#frmLogin input[type=submit]:hover {
+			background-color: #166fe5;
+		}
+
+		.additional-links {
+			text-align: center;
+			margin: 20px auto;
+			border-top: 1px solid #dddddd;
+			width: 80%;
+			padding: 20px;
+			max-width: 500px;
+		}
+
+		.additional-links a:nth-child(odd) {
+			box-shadow: 3px 3px 3px #aaaaaa;
+			background-color: #555555; /* Dark gray background for buttons */
+			color: #FFFFFF;
+			padding: 15px 15px;
+			margin: 10px 5px;
+			border: none;
+			border-radius: 6px;
+			font-size: 14px;
+			text-decoration: none;
+		}
+
+		.additional-links a:hover {
+			text-decoration: underline;
+		}
+
+		.additional-links button {
+			background-color: #555555; /* Dark gray background for buttons */
+			color: #FFFFFF;
+			cursor: pointer;
+			box-shadow: 5px 5px 5px #aaaaaa;
+			border-radius: 6px;
+			border: none;
+			font-size: 17px;
+			line-height: 48px;
+			padding: 0 16px;
+			margin-top: 10px;
+			margin-right: 20px;
+		}
+
+
+	</style>
+</head>
+
+</head>
+<body>
+<th:block layout:fragment="content">
+	<div class="loginformdiv">
+		<form name="frmLogin" th:action="@{/member/login.do}" method="post" id="frmLogin">
+			<h2 th:align="center">로그인</h2>
+			<input type="text" name="id" required placeholder="아이디를 입력하세요">
+			<input type="password" name="pw" required placeholder="비밀번호를 입력하세요">
+			<div th:if="${result == 'loginFailed'}" class="txt">
+				아이디나 비밀번호가 틀립니다. 다시 로그인 해 주세요
+			</div>
+			<p class="hello"><input type="submit" value="로그인"></p>
+		</form>
+		<div class="additional-links">
+			<p class="txt" th:text="${param.result}"></p>
+			<a th:href="@{/member/memberForm.do}">
+				<button>회원 가입하기</button>
+			</a>
+			<a href="#">아이디 비밀번호 찾기</a>
+		</div>
+	</div>
+</th:block>
+</body>
+</html>

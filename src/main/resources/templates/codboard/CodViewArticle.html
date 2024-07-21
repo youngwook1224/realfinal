@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="/layout/layout">
+
+<head>
+    <meta charset="UTF-8">
+    <title>글 상세 보기</title>
+    <style type="text/css">
+        body {
+            background-color: #212529;
+            color: #f8f9fa;
+        }
+        .card {
+            background-color: #343a40;
+        }
+        .card-title, .card-text {
+            color: #f8f9fa;
+        }
+        .blockquote {
+            color: #f8f9fa;
+        }
+        header {
+            padding: 1rem 0;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav a {
+            color: #f8f9fa;
+            margin-right: 1rem;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+        .nav-right input[type="search"] {
+            margin-right: 1rem;
+            padding: 0.5rem;
+        }
+        .sign-up {
+            background-color: #007bff;
+            color: #f8f9fa;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        .menu a {
+            color: #f8f9fa;
+            margin-right: 1rem;
+            padding: 0.5rem 0;
+        }
+        .menu li{
+            list-style-type: none;
+            display: inline-block;
+        }
+        .featured-post {
+            margin-bottom: 2rem;
+        }
+        .post-previews {
+            display: flex;
+            justify-content: space-between;
+        }
+        .post-preview {
+            background-color: #343a40;
+            padding: 1rem;
+            margin-right: 1rem;
+            flex: 1;
+        }
+        a {
+            text-decoration: none;
+            color:black;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .target {
+            color:red;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+        .noLine {
+            color:black;
+            font-weight: normal;
+            font-size:1em;
+        }
+    </style>
+    <style>
+        /* 상세 페이지 스타일 */
+        .viewart {
+            background-color: #343a40;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 2rem auto;
+            max-width: 800px;
+        }
+        .viewtbl {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .viewtbl td {
+            padding: 0.5rem;
+        }
+        .viewtbl td:nth-child(odd) {
+            background-color: #495057;
+            color: #f8f9fa;
+            text-align: center;
+        }
+        .viewtbl td:nth-child(even) {
+            background-color: #343a40;
+        }
+
+        #id_title, #id_content , #id_result , #id_id {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #495057;
+            border-radius: 4px;
+            background-color: #495057;
+            color: #f8f9fa;
+        }
+
+
+        #tr_button .btn , #tr_button_modify .btn , #tr_button_check_prob .btn {
+
+            padding: 10px 20px;
+            margin: 10px 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #555555; /* Dark gray background for buttons */
+            color: #FFFFFF;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        #tr_button .btn:last-child , #tr_button_modify .btn:last-child, #tr_button_check_prob .btn:last-child {
+            margin-right: 0;
+        }
+        #tr_button .btn:hover ,#tr_button_modify .btn:hover ,#tr_button_check_prob .btn:hover {
+            background-color: #0056b3;
+        }
+        input[type="hidden"] {
+            display: none;
+        }
+
+    </style>
+    <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+    <script>
+        //글 수정하기 위해 글 정보 활성화
+        function fn_enable(obj) {
+            document.getElementById("tr_button_modify").style.display = "block";
+            document.getElementById("tr_button").style.display = "none";
+            document.getElementById("id_title").disabled = false;
+            document.getElementById("id_content").disabled = false;
+        }
+        //수정 반영하기
+        function fn_modify_article(obj) {
+            obj.action = "/codboard/codModArticle.do";
+            obj.submit();
+        }
+        //글 상세 보기로 전환(취소)
+        function toList(obj) {
+            obj.action = "/codboard/codViewArticle.do";
+            obj.method = "get";
+            obj.submit();
+        }
+        //리스트로 돌아가기
+        function backToList(obj) {
+            obj.action = "/codboard/codListArticles.do";
+            obj.method = "get";
+            obj.submit();
+        }
+        //삭제하기
+        function fn_remove_article(url, articleNo) {
+            //동적으로 폼(form)태그를 생성
+            let del_form = document.createElement("form");
+            del_form.setAttribute("action", url);
+            del_form.setAttribute("method", "post");
+            let articleNoInput = document.createElement("input"); //동적으로 input태그 생성
+            articleNoInput.setAttribute("type", "hidden");
+            articleNoInput.setAttribute("name", "articleNo");
+            articleNoInput.setAttribute("value", articleNo);
+            del_form.appendChild(articleNoInput);
+            document.body.appendChild(del_form);
+            del_form.submit();
+        }
+        //정답확인
+        function fn_check_result(RS) {
+            let result = document.getElementById("id_result").value;
+            let result_check = document.getElementById("result_check").value;
+
+            if (result === result_check) {
+                alert("정답입니다.");
+                RS.action = "/codboard/codListArticles.do";
+                RS.method = "get";
+                RS.submit();
+            } else {
+                alert("오답입니다. 좀 더 힘내세요.");
+                frmArticle.result.focus();
+                document.getElementById("id_result").value = "";
+            }
+        }
+    </script>
+</head>
+<body>
+<header>
+    <h1>글 상세 보기</h1>
+</header>
+<th:block layout:fragment="content">
+<form name="frmArticle" action="" method="post" enctype="multipart/form-data">
+    <div class="viewart">
+        <table class="viewtbl" align="center">
+
+                <input type="hidden" name="articleNo" th:value="${articleMap.article.articleNo}">
+
+            <tr>
+                <td>작성자아이디</td>
+                <td><input type="text" id="id_id" th:value="${articleMap.article.id}" disabled></td>
+            </tr>
+            <tr>
+                <td>제목</td>
+                <td><input type="text" id="id_title" name="title" th:value="${articleMap.article.title}" disabled></td>
+            </tr>
+            <tr>
+                <td>문제</td>
+                <td><textarea rows="10" id="id_content" name="content" th:text="${articleMap.article.content}" disabled></textarea></td>
+            </tr>
+            <tr>
+                <td>답안</td>
+                <td><input type="text" id="id_result" name="result"></td>
+            </tr>
+            <tr id="tr_button_check_prob">
+                <td colspan="2">
+                    <input type="button" class="btn" value="정답확인" onclick="fn_check_result(this.form)">
+                    <input type="hidden" class="btn" id="result_check" th:value="${articleMap.article.result}">
+                </td>
+            </tr>
+
+                <tr id="tr_button_modify" style="display: none;">
+                    <td colspan="2">
+                        <input type="button" class="btn" value="수정반영하기" onclick="fn_modify_article(frmArticle)">
+                        <input type="button" class="btn" value="취소" onclick="toList(frmArticle)">
+                    </td>
+                </tr>
+                <tr id="tr_button">
+                    <td colspan="2">
+                  <span th:if="${articleMap != null && articleMap.article != null && session != null && session.member != null && articleMap.article.id == session.member.id}">
+                    <input type="button" class="btn" value="수정하기" onclick="fn_enable(this.form)">
+                    <input type="button" class="btn" value="삭제하기" th:onclick="|fn_remove_article('/codboard/codRemoveArticle.do', ${articleMap.article.articleNo})|">
+                  </span>
+                        <input type="button" class="btn" value="리스트로 돌아가기" onclick="backToList(this.form)">
+                    </td>
+                </tr>
+        </table>
+    </div>
+</form>
+</th:block>
+</body>
+</html>

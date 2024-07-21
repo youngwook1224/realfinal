@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="/layout/layout">
+
+
+
+
+
+
+
+
+
+<header th:fragment="header">
+    <nav>
+        <div class="nav-left">
+            <a th:href="@{/main.do}"><img src="/images/logo.jpg" alt="로고" width="150" height="100"></a>
+        </div>
+        <div class="nav-right">
+            <input type="search" placeholder="Search">
+            <form th:action="@{/member/logout.do}" th:if="${session.isLogOn == true and session.member != null}" method="get">
+                <button type="submit" class="sign-up">로그아웃</button>
+            </form>
+            <form th:action="@{/member/loginForm.do}" th:unless="${session.isLogOn == true and session.member != null}" method="get">
+                <button type="submit" class="sign-up">로그인</button>
+            </form>
+        </div>
+    </nav>
+    <div class="menu">
+        <ul>
+            <li> <a href="#">공지사항</a> </li>
+            <li> <a th:href="@{/codboard/codListArticles.do}">코딩챌린지</a> </li>
+            <li> <a th:href="@{/board/freeListArticles.do}">자유게시판</a> </li>
+            <li> <a th:href="@{/shopInfo.do}">예약/오시는길</a> </li>
+            <li> <a th:href="@{/menu.do}">메뉴안내</a> </li>
+
+        </ul>
+    </div>
+    <br>
+</header>
+</html>

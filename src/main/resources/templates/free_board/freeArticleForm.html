@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="/layout/layout">
+<head>
+	<meta charset="UTF-8">
+	<title>글 쓰기 창</title>
+
+	<style type="text/css">
+		body {
+			background-color: #212529;
+			color: #f8f9fa;
+		}
+		.card {
+			background-color: #343a40;
+		}
+		.card-title, .card-text {
+			color: #f8f9fa;
+		}
+		.blockquote {
+			color: #f8f9fa;
+		}
+		header {
+			padding: 1rem 0;
+		}
+		nav {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		nav a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+		}
+		.nav-right {
+			display: flex;
+			align-items: center;
+		}
+		.nav-right input[type="search"] {
+			margin-right: 1rem;
+			padding: 0.5rem;
+		}
+		.sign-up {
+			background-color: #007bff;
+			color: #f8f9fa;
+			border: none;
+			padding: 0.5rem 1rem;
+			cursor: pointer;
+		}
+		.menu {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 1rem 0;
+		}
+		.menu a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+			padding: 0.5rem 0;
+		}
+		.menu li{
+			list-style-type: none;
+			display: inline-block;
+		}
+		.featured-post {
+			margin-bottom: 2rem;
+		}
+		.post-previews {
+			display: flex;
+			justify-content: space-between;
+		}
+		.post-preview {
+			background-color: #343a40;
+			padding: 1rem;
+			margin-right: 1rem;
+			flex: 1;
+		}
+		a {
+			text-decoration: none;
+			color:black;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+		.target {
+			color:red;
+			font-weight: bold;
+			font-size: 1.5em;
+		}
+		.noLine {
+			color:black;
+			font-weight: normal;
+			font-size:1em;
+		}
+	</style>
+
+	<style>
+
+
+		.artTitle {
+			text-align: center;
+			color: #FFFFFF; /* White text for the header */
+		}
+
+		.addarticle {
+			margin: 0 auto;
+			width: 60%;
+			padding: 20px;
+			background-color: #333333; /* Dark gray background for form container */
+			border-radius: 10px;
+			box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+		}
+		.idbox{
+			width: 15%;
+			padding: 10px;
+			margin-bottom: 20px;
+			border: 1px solid #555555; /* Slightly lighter border for input fields */
+			border-radius: 5px;
+			background-color: #222222; /* Darker background for input fields */
+			color: #FFFFFF; /* White text for input fields */
+		}
+
+		.titlebox {
+			margin-left: 20px;
+			width: 50%;
+			padding: 10px;
+			margin-bottom: 20px;
+			border: 1px solid #555555; /* Slightly lighter border for input fields */
+			border-radius: 5px;
+			background-color: #222222; /* Darker background for input fields */
+			color: #FFFFFF; /* White text for input fields */
+		}
+		.contentbox{
+			margin-left: 20px;
+			width: 90%;
+			padding: 10px;
+			margin-bottom: 10px;
+			border: 1px solid #555555; /* Slightly lighter border for input fields */
+			border-radius: 5px;
+			background-color: #222222; /* Darker background for input fields */
+			color: #FFFFFF; /* White text for input fields */
+		}
+
+		.file_btn {
+			padding: 5px 5px;
+			margin: 5px 2px;
+			border: none;
+			border-radius: 5px;
+			background-color: #555555; /* Dark gray background for buttons */
+			color: #FFFFFF;
+			cursor: pointer;
+			font-size: 12px;
+			width: 200px;
+			height: 20px;
+			display: flex;
+			margin-left: 30px;
+		}
+
+		img#preview {
+			display: block;
+			margin: 10px auto;
+			width: 200px;
+		}
+
+		.addarticle_btn .btn {
+			padding: 10px 20px;
+			margin: 10px 5px;
+			border: none;
+			border-radius: 5px;
+			background-color: #555555; /* Dark gray background for buttons */
+			color: #FFFFFF;
+			cursor: pointer;
+			font-size: 16px;
+		}
+
+		.addarticle_btn{
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			margin: 0 auto;
+		}
+
+
+		.addarticle_btn .btn:hover, .addarticle_btn .btn:hover {
+			background-color: #777777; /* Slightly lighter background on hover */
+		}
+
+		.wrt_label {
+			text-align: right;
+			display: inline-block;
+			margin-top: 10px;
+			margin-left: 40px;
+			color: #FFFFFF;
+		}
+
+	</style>
+	<script src="https://code.jquery.com/jquery-latest.min.js"></script>
+	<script>
+		//제이쿼리 업로드할 이미지 미리보기 함수
+        function readImage(input){
+           if(input.files && input.files[0]){
+              let reader = new FileReader();
+              reader.onload = function(event){
+                 console.log(event);
+                 $('#preview').attr('src',event.target.result);
+              }
+              reader.readAsDataURL(input.files[0]);
+           }else{
+              $('#preview').attr('src','#');
+           }
+        }
+        //글 목록 페이지 이동 메서드
+        function backToList(obj) {
+           obj.method= "get";
+           obj.action = "/board/freeListArticles.do";
+           obj.submit();
+        }
+
+        // 폼 유효성 검사 함수
+        function validateForm() {
+            var freeTitle = document.getElementsByName("freeTitle")[0].value;
+            if (freeTitle == null || freeTitle.trim() == "") {
+                alert("제목은 비워둘 수 없습니다.");
+                return false;
+            }
+            return true;
+        }
+	</script>
+</head>
+<body>
+<th:block layout:fragment="content">
+	<!-- 에러 메시지 표시 -->
+	<div th:if="${errorMessage}" class="error-message" style="color: red; text-align: center;">
+		<p th:text="${errorMessage}"></p>
+	</div>
+
+	<h2 align="center" class="artTitle">새 글쓰기</h2>
+	<form action="/board/freeAddArticle.do" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+
+	<div class="addarticle">
+		<div class="addarticle2">
+		<input type="text" class="titlebox" size="50" name="freeTitle" required placeholder="글 제목을 입력해주세요">
+
+			 <p class="wrt_label">작성자</p>
+			<input type="text" class="idbox" size="50" th:value="${session.member.name}" readonly>
+		</div>
+		<textarea rows="10" class="contentbox" cols="50" name="freeContent" maxlength="4000" placeholder="내용을 입력해주세요"></textarea>
+		<input type="file" class="file_btn" name="freeImageFileName" onchange="readImage(this)">
+		<img id="preview" src="#" width="200" alt="">
+		<div class="addarticle_btn">
+			<input class="btn" type="submit" value="글쓰기">
+			<input class="btn" type="button" value="목록보기" onclick="backToList(this.form)">
+		</div>
+	</div>
+	</form>
+</th:block>
+</body>
+</html>

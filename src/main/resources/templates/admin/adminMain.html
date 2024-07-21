@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="/layout/layout">
+<head>
+    <title>관리자 - 회원 관리</title>
+</head>
+<body>
+<h1>회원 관리</h1>
+<th:block layout:fragment="content">
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>이름</th>
+            <th>이메일</th>
+            <th>가입일</th>
+            <th>작업</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${members}" >
+            <td th:text="${user.id}"></td>
+            <td th:text="${user.name}"></td>
+            <td th:text="${user.email}"></td>
+            <td th:text="${#dates.format(user.joinDate, 'yyyy-MM-dd HH:mm')}"></td>
+            <td>
+                <button th:onclick="'approveUser(\'' + ${user.id} + '\')'">승인</button>
+                <button th:onclick="'rejectUser(\'' + ${user.id} + '\')'">거부</button>
+                <button th:onclick="'deleteUser(\'' + ${user.id} + '\')'">삭제</button>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <script>
+        function approveUser(id) {
+            fetch('/admin/adminPage.do/successId', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'id=' + id
+            }).then(() => location.reload());
+        }
+
+        function rejectUser(id) {
+            fetch('/admin/adminPage.do/failId', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                body: 'id=' + id
+            }).then(() => location.reload());
+        }
+
+        function deleteUser(id) {
+            if (confirm('정말로 이 사용자를 삭제하시겠습니까?')) {
+                fetch('/admin/adminPage.do/deleteMember', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+                    body: 'id=' + id
+                }).then(() => location.reload());
+            }
+        }
+    </script>
+</th:block>
+</body>
+</html>

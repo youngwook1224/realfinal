@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="scv.DevOpsunity.free_board.dao.FreeBoardDAO">
+
+    <resultMap type="FreeArticleDTO" id="articleResult">
+        <result property="freeArticleNo" column="freeArticleNo"/>
+        <result property="freeTitle" column="freeTitle"/>
+        <result property="freeContent" column="freeContent"/>
+        <result property="id" column="id"/>
+        <result property="freeWriteDate" column="freeWriteDate"/>
+        <result property="freeImageFileName" column="freeImageFileName"/>
+    </resultMap>
+
+    <select id="selectAllArticles" resultMap="articleResult" parameterType="int">
+        select freeArticleNo, freeTitle, id, freeWriteDate from board_tbl order by freeArticleNo desc LIMIT #{count},10
+    </select>
+
+    <select id="selectToArticles" resultType="int">
+        <![CDATA[
+    select count(*) from board_tbl
+    ]]>
+    </select>
+
+    <select id="getNewArticleNo" resultType="int">
+        select IFNULL(max(freeArticleNo),0)+1 from board_tbl
+    </select>
+
+    <insert id="insertNewArticle" parameterType="FreeArticleDTO">
+        insert into board_tbl(freeTitle, freeContent, id, freeWriteDate, freeImageFileName)
+        values(#{freeTitle}, #{freeContent}, #{id}, sysdate(), #{freeImageFileName})
+    </insert>
+
+    <select id="selectArticle" resultType="FreeArticleDTO" parameterType="int">
+        <![CDATA[
+    select * from board_tbl where freeArticleNo=#{freeArticleNo}
+    ]]>
+    </select>
+
+    <!-- 이미지 한 개 글 수정하기-->
+    <update id="updateArticle" parameterType="java.util.Map">
+        update board_tbl set freeTitle=#{freeTitle}, freeContent=#{freeContent}
+        <if test="freeImageFileName != null and freeImageFileName != ''">
+            ,freeImageFileName=#{freeImageFileName}
+        </if>
+        where freeArticleNo=#{freeArticleNo}
+    </update>
+
+    <delete id="deleteArticle" parameterType="int">
+        <![CDATA[
+    delete from board_tbl where freeArticleNo=#{freeArticleNo}
+    ]]>
+    </delete>
+    
+    <select id="selectSearch" resultType="freeArticleDTO">
+        SELECT * FROM board_tbl
+        <where>
+            <if test="type == 'title'">
+                freeTitle LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="type == 'writer'">
+                id LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+        ORDER BY freeArticleNo DESC
+        LIMIT #{start}, #{pageLetter}
+    </select>
+
+    <select id="selectSearchCount" resultType="int">
+        SELECT COUNT(*) FROM board_tbl
+        <where>
+            <if test="type == 'title'">
+                freeTitle LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+            <if test="type == 'writer'">
+                id LIKE CONCAT('%', #{keyword}, '%')
+            </if>
+        </where>
+    </select>
+
+</mapper>

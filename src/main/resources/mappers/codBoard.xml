@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="scv.DevOpsunity.coding_board.dao.CodDAO">
+
+    <resultMap type="CodDTO" id="articleResult">
+        <result property="articleNo" column="articleNo"/>
+        <result property="title" column="title"/>
+        <result property="content" column="content"/>
+        <result property="result" column="result"/>
+        <result property="id" column="id"/>
+    </resultMap>
+
+    <select id="selectAllArticles" resultMap="articleResult" parameterType="int">
+        select articleNo, title, id from codingtest_tbl order by articleNo desc LIMIT #{count},10
+    </select>
+
+    <select id="selectToArticles" resultType="int">
+        <![CDATA[
+ 			select count(*) from codingtest_tbl
+ 		]]>
+    </select>
+
+    <select id="getNewArticleNo" resultType="int">
+        <![CDATA[
+ 			select max(articleNo)+1 from codingtest_tbl
+ 		]]>
+    </select>
+
+    <insert id="insertNewArticle" parameterType="java.util.Map">
+        <![CDATA[
+ 			insert into codingtest_tbl values(#{articleNo},#{title},#{content},#{result},#{id})
+ 		]]>
+    </insert>
+
+    <select id="selectArticle" resultType="CodDTO" parameterType="int">
+        <![CDATA[
+ 			select * from codingtest_tbl where articleNo=#{articleNo}
+ 		]]>
+    </select>
+
+    <update id="updateArticle" parameterType="java.util.Map">
+        update codingtest_tbl set title=#{title}, content=#{content} where articleNo=#{articleNo}
+    </update>
+
+    <delete id="deleteArticle" parameterType="int">
+        <![CDATA[
+ 			delete from codingtest_tbl where articleNo=#{articleNo}
+ 		]]>
+    </delete>
+
+</mapper>

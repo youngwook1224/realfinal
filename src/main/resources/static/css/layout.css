@@ -1,0 +1,31 @@
+@charset "utf-8";
+#container{
+	width: 100%;
+	margin: 0 auto;
+	text-align: center;
+}
+header{
+	padding: 5px;
+	margin-bottom: 5px;
+	background-color: lightgreen;
+}
+#sidebar_left{
+	width: 15%;
+	height: 700px;
+	padding: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	float: left;
+	background-color: #b2ccff;
+}
+#content {
+	width: 75%;
+	padding: 5px;
+	margin-right: 5px;
+	float: left;
+}
+footer{
+	clear: both;
+	padding: 5px;
+	background-color: #e5d85c;
+}

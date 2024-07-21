@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="/layout/layout">
+<head>
+  <meta charset="UTF-8">
+  <title>글 쓰기 창</title>
+    <style type="text/css">
+        body {
+            background-color: #212529;
+            color: #f8f9fa;
+        }
+        .card {
+            background-color: #343a40;
+        }
+        .card-title, .card-text {
+            color: #f8f9fa;
+        }
+        .blockquote {
+            color: #f8f9fa;
+        }
+        header {
+            padding: 1rem 0;
+        }
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        nav a {
+            color: #f8f9fa;
+            margin-right: 1rem;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+        .nav-right input[type="search"] {
+            margin-right: 1rem;
+            padding: 0.5rem;
+        }
+        .sign-up {
+            background-color: #007bff;
+            color: #f8f9fa;
+            border: none;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+        }
+        .menu {
+            display: flex;
+            flex-wrap: wrap;
+            margin: 1rem 0;
+        }
+        .menu a {
+            color: #f8f9fa;
+            margin-right: 1rem;
+            padding: 0.5rem 0;
+        }
+        .menu li{
+            list-style-type: none;
+            display: inline-block;
+        }
+        .featured-post {
+            margin-bottom: 2rem;
+        }
+        .post-previews {
+            display: flex;
+            justify-content: space-between;
+        }
+        .post-preview {
+            background-color: #343a40;
+            padding: 1rem;
+            margin-right: 1rem;
+            flex: 1;
+        }
+        a {
+            text-decoration: none;
+            color:black;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .target {
+            color:red;
+            font-weight: bold;
+            font-size: 1.5em;
+        }
+        .noLine {
+            color:black;
+            font-weight: normal;
+            font-size:1em;
+        }
+        </style>
+
+  <style>
+
+
+    .artTitle {
+      text-align: center;
+      color: #FFFFFF; /* White text for the header */
+    }
+
+    .addarticle {
+      margin: 0 auto;
+      width: 60%;
+      padding: 20px;
+      background-color: #333333; /* Dark gray background for form container */
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    }
+    .idbox{
+      width: 15%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #555555; /* Slightly lighter border for input fields */
+      border-radius: 5px;
+      background-color: #222222; /* Darker background for input fields */
+      color: #FFFFFF; /* White text for input fields */
+    }
+
+    .titlebox {
+      margin-left: 20px;
+      width: 50%;
+      padding: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #555555; /* Slightly lighter border for input fields */
+      border-radius: 5px;
+      background-color: #222222; /* Darker background for input fields */
+      color: #FFFFFF; /* White text for input fields */
+    }
+    .contentbox{
+      margin-left: 20px;
+      width: 90%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #555555; /* Slightly lighter border for input fields */
+      border-radius: 5px;
+      background-color: #222222; /* Darker background for input fields */
+      color: #FFFFFF; /* White text for input fields */
+    }
+
+    .file_btn {
+      margin-left: 20px;
+      color: #FFFFFF;
+      margin-bottom: 10px;
+    }
+
+    img#preview {
+      display: block;
+      margin: 10px auto;
+      border: 1px solid #FFFFFF; /* White border for the preview image */
+      width: 200px;
+    }
+
+    .addarticle_btn .btn {
+      padding: 10px 20px;
+      margin: 10px 5px;
+      border: none;
+      border-radius: 5px;
+      background-color: #555555; /* Dark gray background for buttons */
+      color: #FFFFFF;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .addarticle_btn{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin: 0 auto;
+    }
+
+
+    .addarticle_btn .btn:hover, .addarticle_btn .btn:hover {
+      background-color: #777777; /* Slightly lighter background on hover */
+    }
+
+    .wrt_label {
+      text-align: right;
+      display: inline-block;
+      margin-top: 10px;
+      margin-left: 40px;
+      color: #FFFFFF;
+    }
+
+  </style>
+  <script src="https://code.jquery.com/jquery-latest.min.js"></script>
+  <script>
+
+    //글 목록 페이지 이동 메서드 (버튼 인풋태그에 onclick하여 연결)
+    function backToList(obj) {
+      obj.method= "get";
+      obj.action = "/codboard/codListArticles.do";
+      obj.submit();
+    }
+
+  </script>
+</head>
+<body>
+<!-- 글 쓰기 구현  -->
+
+<th:block layout:fragment="content">
+  <h2 align="center">새 글쓰기</h2>
+  <form action="/codboard/codAddArticle.do" method="post" enctype="multipart/form-data">
+    <div class="addarticle">
+      <div class="addarticle2">
+        <input type="text" class="titlebox" size="50" name="title" placeholder="글 제목을 입력해주세요">
+        <p class="wrt_label">작성자</p>
+           <input type="text" class="idbox" size="50" th:value="${session.member.name}" readonly>
+      </div>
+          <textarea rows="20" class="contentbox" cols="50" name="content" maxlength="4000" placeholder="문제를 입력해주세요"></textarea>
+          <textarea rows="20" cols="50" class="contentbox" name="result" maxlength="4000" placeholder="정답을 입력해주세요"></textarea>
+        <div class="addarticle_btn">
+            <input type="submit" class="btn" value="글쓰기">
+            <input type="button" class="btn" value="목록보기" onclick = "backToList(this.form)">
+       </div>
+    </div>
+  </form>
+</th:block>
+</body>
+</html>

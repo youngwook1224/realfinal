@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	  layout:decorate="/layout/layout">
+<head>
+<meta charset="UTF-8">
+<title>메인페이지</title>
+
+	<style type="text/css">
+		body {
+			background-color: #212529;
+			color: #f8f9fa;
+		}
+		.card {
+			background-color: #343a40;
+		}
+		.card-title, .card-text {
+			color: #f8f9fa;
+		}
+		.blockquote {
+			color: #f8f9fa;
+		}
+		header {
+			padding: 1rem 0;
+		}
+		nav {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+		nav a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+		}
+		.nav-right {
+			display: flex;
+			align-items: center;
+		}
+		.nav-right input[type="search"] {
+			margin-right: 1rem;
+			padding: 0.5rem;
+		}
+		.sign-up {
+			background-color: #007bff;
+			color: #f8f9fa;
+			border: none;
+			padding: 0.5rem 1rem;
+			cursor: pointer;
+		}
+		.menu {
+			display: flex;
+			flex-wrap: wrap;
+			margin: 1rem 0;
+		}
+		.menu a {
+			color: #f8f9fa;
+			margin-right: 1rem;
+			padding: 0.5rem 0;
+		}
+		.menu li{
+			list-style-type: none;
+			display: inline-block;
+		}
+		.featured-post {
+			margin-bottom: 2rem;
+		}
+		.post-previews {
+			display: flex;
+			justify-content: space-between;
+		}
+		.post-preview {
+			background-color: #343a40;
+			padding: 1rem;
+			margin-right: 1rem;
+			flex: 1;
+		}
+		a {
+			text-decoration: none;
+			color:black;
+		}
+		a:hover {
+			text-decoration: underline;
+		}
+		.target {
+			color:red;
+			font-weight: bold;
+			font-size: 1.5em;
+		}
+		.noLine {
+			color:black;
+			font-weight: normal;
+			font-size:1em;
+		}
+	</style>
+
+<style type="text/css">
+	a {
+		text-decoration: none;
+		color: #fff;
+	}
+	a:hover {
+		text-decoration: underline;
+	}
+	.target {
+		color:red;
+		font-weight: bold;
+		font-size: 1.5em;
+	}
+	.noLine {
+		color:black;
+		font-weight: normal;
+		font-size:1em;
+	}
+
+	#listToArticle {
+		margin: 0 auto;
+		width: 60%;
+		padding: 30px 100px;
+		border-radius: 15px;
+		display: flex; /* Flexbox 사용 */
+		flex-wrap: wrap; /* 여러 줄로 정렬 */
+		justify-content: center; /* 가운데 정렬 */
+	}
+
+	.listToArticles {
+		text-align: center;
+		border-radius: 10px;
+		background-color: #eeeeff;
+		width: 25%;
+		height: 250px;
+		margin: 25px; /* 여백 조정 */
+		padding: 20px;
+		color: black;
+		transition: transform 0.2s;
+		box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+	}
+
+
+
+	.listToArticles:hover {
+		transform: translateY(-10px); /* 호버 시 위로 이동 */
+	}
+
+	.listToArticlesTitle{
+		height: 70%;
+	}
+	.listToArticlesInfo{
+		height: 30%;
+	}
+
+	.listToArticles h3 {
+		text-align: left;
+		margin-top: 30px; /* 여백 제거 */
+		margin-left: 10px;
+		font-size: 1.2em; /* 글꼴 크기 조정 */
+		color: #333; /* 글꼴 색상 조정 */
+	}
+
+	.listToArticles p {
+		margin: 3px;
+		text-align: right;
+		font-size: 0.9em; /* 글꼴 크기 조정 */
+		color: #555; /* 글꼴 색상 조정 */
+	}
+
+	.listToArticles a {
+		color: #007BFF; /* 링크 색상 설정 */
+		text-decoration: none; /* 링크 밑줄 제거 */
+	}
+
+	.listToArticles a:hover {
+		text-decoration: underline; /* 호버 시 밑줄 추가 */
+	}
+
+	.a_btn{
+		padding: 10px 20px;
+		margin: 10px 5px;
+		border: none;
+		border-radius: 5px;
+		background-color: #555555; /* Dark gray background for buttons */
+		color: #FFFFFF;
+		cursor: pointer;
+		font-size: 16px;
+		text-align: right;
+		box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+	}
+
+
+
+
+	.searchdiv{
+		text-align: center; /* 가로 중앙 정렬 */
+		display: flex;
+		align-items: center; /* 세로 중앙 정렬 */
+		justify-content: center;
+		margin-bottom: 30px;
+
+	}
+	.searchdiv select {
+		width: 70px;
+		height: 35px;
+		background-color: #555555; /* Dark gray background for buttons */
+		box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+		margin: 20px 5px 10px 0;
+		color: #dddddd;
+	}
+	.searchdiv input {
+		width: 400px;
+		height: 30px;
+		box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+		border: none;
+		margin: 20px 5px 10px 0;
+	}
+	.searchdiv button{
+		width: 70px;
+		height: 35px;
+		box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+		margin: 20px 5px 10px 0;
+		background-color: #555555; /* Dark gray background for buttons */
+		color: #FFFFFF;
+		cursor: pointer;
+	}
+
+
+
+
+</style>
+<script>
+	function fn_free_articleForm(isLogOn, freeArticleForm, freeLoginForm){
+		if(isLogOn == true){
+			location.href = freeArticleForm;
+		}else{
+			alert("로그인 후 글쓰기가 가능합니다.");
+			location.href=freeLoginForm+ '?action=/board/freeArticleForm.do';
+		}
+	}
+
+	function search() {
+  		var keyword = document.getElementById("keyword").value;
+		  if (keyword == "") {
+			alert("검색어를 입력하세요");
+			return false;
+	  	}
+	}
+	
+</script>
+</head>
+<body>
+	<th:block layout:fragment="content">
+
+		<h2 align="center">글 목록창</h2>
+		<!--글 구현-->
+		<div id="listToArticle">
+
+			<div class="listToArticles" th:each="article : ${articleMap.articlesList}">
+				<a th:href="@{/board/freeViewArticle.do(freeArticleNo=${article.freeArticleNo})}">
+					<div class="listToArticlesTitle">
+						<h3 th:text=${article.freeTitle}></h3>
+					</div>
+					<div class="listToArticlesInfo">
+						<p>작성자 : <span th:text=${article.id}></span> </p>
+						<p>작성일자 : <span th:text=${article.freeWriteDate}></span> </p>
+					</div>
+				</a>
+			</div>
+		</div>
+
+
+		<!--페이징 처리-->
+		<div align="center" th:if="${articleMap.totArticles > 10}">
+			<div th:if="${articleMap.totArticles > 100}">
+				<span th:each="num : ${#numbers.sequence(1, (articleMap.section > articleMap.totArticles / 100 ? (articleMap.totArticles % 100) / 10 + 1 : 10))}">
+					<span th:if="${articleMap.section > 1 and num == 1}">
+						<a th:href="@{/board/freeListArticles.do(section=${articleMap.section - 1}, pageNum=${(articleMap.section - 1) * 10})}">◀</a>
+					</span>
+					<span th:if="${num == (articleMap.pageNum % 10 == 0 ? 10 : articleMap.pageNum % 10)}">
+						<a class="target" th:href="@{/board/freeListArticles.do(section=${articleMap.section}, pageNum=${(articleMap.section - 1) * 10 + num})}" th:text="${(articleMap.section-1)*10+num}">}</a>
+					</span>
+					<span th:unless="${num == (articleMap.pageNum % 10 == 0 ? 10 : articleMap.pageNum % 10)}">
+						<a classs="noLine" th:href="@{/board/freeListArticles.do(section=${articleMap.section}, pageNum=${(articleMap.section - 1) * 10 + num})}"  th:text="${(articleMap.section-1)*10+num}"></a>
+					</span>
+					<span th:if="${num == 10}">
+						<a th:href="@{/board/freeListArticles.do(section=${articleMap.section + 1}, pageNum=${articleMap.section * 10 + 1})}">▶</a>
+					</span>
+				</span>
+			</div>
+			<div th:if="${articleMap.totArticles <= 100}">
+				<span th:each="num : ${#numbers.sequence(1,(articleMap.totArticles/10+1))}">
+					<span th:if="${num==articleMap.pageNum}">
+							<a class="target" th:href="@{/board/freeListArticles.do(section=${articleMap.section},pageNum=${num})}" th:text="${num}"></a>
+					</span>
+					<span th:unless="${num==articleMap.pageNum}">
+							<a class="noLine" th:href="@{/board/freeListArticles.do(section=${articleMap.section},pageNum=${num})}" th:text="${num}"></a>
+					</span>
+				</span>
+			</div>
+		</div>
+
+
+		<div class="searchdiv">
+			<form action="#" th:action="@{/board/freeReview.do}" th:object="${searchForm}" method="get">
+				<select th:field="*{type}">
+					<option value="title">제목</option>
+					<option value="writer">작성자</option>
+				</select>
+				<input type="text" th:field="*{keyword}" placeholder="검색어 입력" />
+				<button type="submit" onclick="search()">검색하기</button>
+			</form>
+		</div>
+
+		<p align="center">
+			<a class="a_btn" th:href="'javascript:fn_free_articleForm(' + ${session.isLogOn} + ', \'/board/freeArticleForm.do\', \'/member/loginForm.do\')'"> 글쓰기 </a>
+		</p>
+
+	</th:block>
+</body>
+</html>
