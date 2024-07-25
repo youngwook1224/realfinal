@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import scv.DevOpsunity.admin.service.AdminService;
 
+
 @Controller("adminController")
 @RequestMapping("/admin")
 public class AdminController {
